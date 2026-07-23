@@ -1,0 +1,95 @@
+/* Table & Data List Styles */
+.management-grid {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 1100px) {
+    .management-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+}
+
+.data-table th {
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.status-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-tag.Andamento {
+    background: rgba(234, 179, 8, 0.15);
+    color: var(--gold);
+    border: 1px solid var(--gold-border);
+}
+
+.status-tag.Contemplada {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-tag.Vendida {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--emerald);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.action-btns-row {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-tbl-action {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    color: var(--text-primary);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-tbl-action:hover {
+    background: var(--border-color);
+}
+
+.btn-tbl-action.delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+    border-color: var(--danger);
+}

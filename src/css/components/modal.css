@@ -1,0 +1,112 @@
+/* Modal Overlay & Document Reader Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(11, 15, 23, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 960px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.btn-modal-close {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-modal-close:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.modal-body h1, .modal-body h2, .modal-body h3 {
+    color: var(--gold);
+    margin: 16px 0 8px 0;
+}
+
+.modal-body h1 { font-size: 22px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+.modal-body h2 { font-size: 18px; }
+.modal-body h3 { font-size: 15px; color: var(--emerald); }
+
+.modal-body ul, .modal-body ol {
+    margin-left: 20px;
+    margin-bottom: 12px;
+}
+
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+.modal-body th, .modal-body td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.modal-body th {
+    background: var(--bg-main);
+    color: var(--gold);
+}
+
+.modal-body blockquote {
+    border-left: 3px solid var(--gold);
+    background: var(--gold-glow);
+    padding: 10px 16px;
+    margin: 12px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-main);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}

@@ -1,0 +1,52 @@
+:root {
+    --bg-main: #0B0F17;
+    --bg-card: #131A26;
+    --bg-card-hover: #1A2433;
+    --border-color: #232E40;
+    
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    
+    --gold: #EAB308;
+    --gold-glow: rgba(234, 179, 8, 0.15);
+    --gold-border: rgba(234, 179, 8, 0.3);
+    
+    --emerald: #10B981;
+    --emerald-glow: rgba(16, 185, 129, 0.15);
+    
+    --danger: #EF4444;
+    --danger-glow: rgba(239, 68, 68, 0.15);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 24px 16px;
+}
+
+.app-container {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.font-bold { font-weight: 700; }
+.text-gold { color: var(--gold); }
+.text-emerald { color: var(--emerald); }
+.text-danger { color: var(--danger); }
+.text-muted { color: var(--text-muted); }
