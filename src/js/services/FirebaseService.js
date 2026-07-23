@@ -1,9 +1,16 @@
 /**
  * FirebaseService - Cloud Database Integration (Firebase Firestore)
- * Configured via window.FIREBASE_CONFIG (Gitignored env.js)
+ * Project: gestor-consorcio
  */
 
-export const firebaseConfig = window.FIREBASE_CONFIG || {};
+export const firebaseConfig = window.FIREBASE_CONFIG || {
+    apiKey: "AIzaSyBfLZJT5gJGfowcHby98f9PlfbQGoLx7Ic",
+    authDomain: "gestor-consorcio.firebaseapp.com",
+    projectId: "gestor-consorcio",
+    storageBucket: "gestor-consorcio.firebasestorage.app",
+    messagingSenderId: "104584721327",
+    appId: "1:104584721327:web:db1e105d8a3c657b97f55a"
+};
 
 export class FirebaseService {
     static init() {
@@ -13,8 +20,8 @@ export class FirebaseService {
                 return null;
             }
 
-            if (!firebaseConfig.apiKey) {
-                console.warn('Firebase credentials not set in window.FIREBASE_CONFIG. Operating in LocalStorage Mode.');
+            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+                console.warn('Firebase credentials missing. Operating in LocalStorage Mode.');
                 return null;
             }
 

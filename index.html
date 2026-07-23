@@ -109,7 +109,7 @@
                     <label for="meta-valor">Valor Estimado (R$)</label>
                     <div class="input-prefix">
                         <span>R$</span>
-                        <input type="number" id="meta-valor" placeholder="15000" step="500" required>
+                        <input type="number" id="meta-valor" placeholder="15000" step="500" inputmode="decimal" required>
                     </div>
                 </div>
                 <div class="form-group flex-1">
@@ -117,10 +117,10 @@
                     <input type="text" id="meta-prazo" value="Dezembro/2026" required>
                 </div>
                 <div class="form-group flex-btn" style="gap: 6px;">
-                    <button type="submit" id="btn-salvar-meta" class="btn-primary" style="padding: 9px 16px;">
+                    <button type="submit" id="btn-salvar-meta" class="btn-primary" style="padding: 12px 16px;">
                         <span>+ Adicionar Meta</span>
                     </button>
-                    <button type="button" id="btn-cancelar-meta" class="btn-secondary" style="display: none; padding: 9px 12px;">
+                    <button type="button" id="btn-cancelar-meta" class="btn-secondary" style="display: none; padding: 12px 12px;">
                         <span>Cancelar</span>
                     </button>
                 </div>
@@ -163,11 +163,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="grupo">Grupo (ex: 1624)</label>
-                            <input type="text" id="grupo" value="1624" placeholder="Ex: 1624" required>
+                            <input type="text" id="grupo" value="1624" placeholder="Ex: 1624" inputmode="numeric" required>
                         </div>
                         <div class="form-group">
                             <label for="cota-num">Cota nº (ex: 263)</label>
-                            <input type="text" id="cota-num" value="263" placeholder="Ex: 263" required>
+                            <input type="text" id="cota-num" value="263" placeholder="Ex: 263" inputmode="numeric" required>
                         </div>
                     </div>
 
@@ -176,13 +176,13 @@
                             <label for="credito-bruto">Crédito Bruto (R$)</label>
                             <div class="input-prefix">
                                 <span>R$</span>
-                                <input type="number" id="credito-bruto" value="126170.12" step="0.01" required>
+                                <input type="number" id="credito-bruto" value="126170.12" step="0.01" inputmode="decimal" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="lance-embutido-pct">Lance Embutido (%)</label>
                             <div class="input-prefix">
-                                <input type="number" id="lance-embutido-pct" value="29.0003" step="0.0001" required>
+                                <input type="number" id="lance-embutido-pct" value="29.0003" step="0.0001" inputmode="decimal" required>
                                 <span>%</span>
                             </div>
                         </div>
@@ -193,14 +193,14 @@
                             <label for="lance-dinheiro">Lance em Dinheiro (R$)</label>
                             <div class="input-prefix">
                                 <span>R$</span>
-                                <input type="number" id="lance-dinheiro" value="21953.60" step="0.01" required>
+                                <input type="number" id="lance-dinheiro" value="21953.60" step="0.01" inputmode="decimal" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="parcela-adesao">1ª Parcela Adesão (R$)</label>
                             <div class="input-prefix">
                                 <span>R$</span>
-                                <input type="number" id="parcela-adesao" value="1463.58" step="0.01" required>
+                                <input type="number" id="parcela-adesao" value="1463.58" step="0.01" inputmode="decimal" required>
                             </div>
                         </div>
                     </div>
@@ -210,12 +210,12 @@
                             <label for="parcela-atual">Parcela Pós-Contemplação (R$)</label>
                             <div class="input-prefix">
                                 <span>R$</span>
-                                <input type="number" id="parcela-atual" value="1370.65" step="0.01" required>
+                                <input type="number" id="parcela-atual" value="1370.65" step="0.01" inputmode="decimal" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="prazo-restante">Prazo Restante (Meses)</label>
-                            <input type="number" id="prazo-restante" value="64" min="1" max="240" required>
+                            <input type="number" id="prazo-restante" value="64" min="1" max="240" inputmode="numeric" required>
                         </div>
                     </div>
 
@@ -224,7 +224,7 @@
                             <label for="lucro-desejado">Lucro Desejado / Ágio (R$)</label>
                             <div class="input-prefix">
                                 <span>R$</span>
-                                <input type="number" id="lucro-desejado" value="11500.00" step="100" required>
+                                <input type="number" id="lucro-desejado" value="11500.00" step="100" inputmode="decimal" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -316,8 +316,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-    <!-- Gitignored Private Environment Config -->
-    <script src="src/js/config/env.js"></script>
     <script src="src/js/app.js"></script>
 </body>
 </html>

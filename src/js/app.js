@@ -11,7 +11,14 @@
     const STORAGE_KEY = 'agio_invest_cotas_v3';
     const METAS_STORAGE_KEY = 'agio_invest_metas_v1';
 
-    const firebaseConfig = window.FIREBASE_CONFIG || {};
+    const firebaseConfig = window.FIREBASE_CONFIG || {
+        apiKey: "AIzaSyBfLZJT5gJGfowcHby98f9PlfbQGoLx7Ic",
+        authDomain: "gestor-consorcio.firebaseapp.com",
+        projectId: "gestor-consorcio",
+        storageBucket: "gestor-consorcio.firebasestorage.app",
+        messagingSenderId: "104584721327",
+        appId: "1:104584721327:web:db1e105d8a3c657b97f55a"
+    };
 
     const PRINT_DEFAULTS = [
         {
