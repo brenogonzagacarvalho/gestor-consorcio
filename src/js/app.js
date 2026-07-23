@@ -1,6 +1,7 @@
 /**
  * Gestor Ágio Invest - Application Bootstrap & Controller
- * Firebase Firestore Cloud Sync Enabled for Project: gestor-consorcio
+ * Firebase Firestore Cloud Sync & Full CRUD Enabled for Cotas & Metas
+ * Project: gestor-consorcio
  */
 
 (function () {
@@ -8,15 +9,9 @@
     const GOAL_TARGET = 100000;
     const GOAL_COTAS_TARGET = 9;
     const STORAGE_KEY = 'agio_invest_cotas_v3';
+    const METAS_STORAGE_KEY = 'agio_invest_metas_v1';
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBfLZJT5gJGfowcHby98f9PlfbQGoLx7Ic",
-        authDomain: "gestor-consorcio.firebaseapp.com",
-        projectId: "gestor-consorcio",
-        storageBucket: "gestor-consorcio.firebasestorage.app",
-        messagingSenderId: "104584721327",
-        appId: "1:104584721327:web:db1e105d8a3c657b97f55a"
-    };
+    const firebaseConfig = window.FIREBASE_CONFIG || {};
 
     const PRINT_DEFAULTS = [
         {
@@ -60,11 +55,18 @@
         }
     ];
 
+    const DEFAULT_METAS = [
+        { id: 'meta-1', nome: 'Entrada / Quitação do Carro Novo', valor: 35000, prazo: 'Outubro/2026' },
+        { id: 'meta-2', nome: 'Viagem de Fim de Ano em Família', valor: 15000, prazo: 'Novembro/2026' },
+        { id: 'meta-3', nome: 'Reserva de Emergência / Investimento', valor: 30000, prazo: 'Dezembro/2026' },
+        { id: 'meta-4', nome: 'Presentes & Festas de Natal', valor: 5000, prazo: 'Dezembro/2026' }
+    ];
+
     const formatBRL = (val) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
     };
 
-    // 2. DOMAIN MODEL
+    // 2. DOMAIN MODELS
     class CotaModel {
         constructor(data) {
             this.id = data.id || `cota-${Date.now()}`;
@@ -113,7 +115,25 @@
         }
     }
 
-    // 3. FIREBASE SERVICE
+    class MetaModel {
+        constructor(data) {
+            this.id = data.id || `meta-${Date.now()}`;
+            this.nome = data.nome || '';
+            this.valor = parseFloat(data.valor) || 0;
+            this.prazo = data.prazo || 'Dezembro/2026';
+        }
+
+        toJSON() {
+            return {
+                id: this.id,
+                nome: this.nome,
+                valor: this.valor,
+                prazo: this.prazo
+            };
+        }
+    }
+
+    // 3. FIREBASE SERVICE (FULL REAL-TIME SNAPSHOT SYNC)
     class FirebaseService {
         static init() {
             try {
@@ -134,13 +154,14 @@
             }
         }
 
+        // Cotas Cloud Actions
         static async saveCotaCloud(cotaData) {
             if (!this.db) return false;
             try {
                 await this.db.collection('cotas').doc(cotaData.id).set(cotaData);
                 return true;
             } catch (e) {
-                console.error('Firestore Write Error:', e);
+                console.error('Firestore Save Cota Error:', e);
                 return false;
             }
         }
@@ -151,21 +172,48 @@
                 await this.db.collection('cotas').doc(cotaId).delete();
                 return true;
             } catch (e) {
-                console.error('Firestore Delete Error:', e);
+                console.error('Firestore Delete Cota Error:', e);
                 return false;
             }
         }
 
-        static async fetchCotasCloud() {
+        static subscribeCotasCloud(callback) {
             if (!this.db) return null;
+            return this.db.collection('cotas').onSnapshot(snapshot => {
+                const cotas = snapshot.docs.map(doc => doc.data());
+                callback(cotas);
+            }, err => console.error('Firestore Cotas listener error:', err));
+        }
+
+        // Metas Cloud Actions
+        static async saveMetaCloud(metaData) {
+            if (!this.db) return false;
             try {
-                const snapshot = await this.db.collection('cotas').get();
-                if (snapshot.empty) return null;
-                return snapshot.docs.map(doc => doc.data());
+                await this.db.collection('metas').doc(metaData.id).set(metaData);
+                return true;
             } catch (e) {
-                console.error('Firestore Read Error:', e);
-                return null;
+                console.error('Firestore Save Meta Error:', e);
+                return false;
             }
+        }
+
+        static async deleteMetaCloud(metaId) {
+            if (!this.db) return false;
+            try {
+                await this.db.collection('metas').doc(metaId).delete();
+                return true;
+            } catch (e) {
+                console.error('Firestore Delete Meta Error:', e);
+                return false;
+            }
+        }
+
+        static subscribeMetasCloud(callback) {
+            if (!this.db) return null;
+            return this.db.collection('metas').onSnapshot(snapshot => {
+                const metas = snapshot.docs.map(doc => doc.data());
+                callback(metas);
+            }, err => console.error('Firestore Metas listener error:', err));
         }
     }
 
@@ -190,6 +238,27 @@
         static saveCotas(cotas) {
             const payload = cotas.map(c => (c instanceof CotaModel ? c.toJSON() : c));
             localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        }
+
+        static loadMetas() {
+            const raw = localStorage.getItem(METAS_STORAGE_KEY);
+            if (!raw) {
+                this.saveMetas(DEFAULT_METAS);
+                return DEFAULT_METAS.map(item => new MetaModel(item));
+            }
+
+            try {
+                const parsed = JSON.parse(raw);
+                return parsed.map(item => new MetaModel(item));
+            } catch (e) {
+                console.error('Error loading metas from LocalStorage:', e);
+                return DEFAULT_METAS.map(item => new MetaModel(item));
+            }
+        }
+
+        static saveMetas(metas) {
+            const payload = metas.map(m => (m instanceof MetaModel ? m.toJSON() : m));
+            localStorage.setItem(METAS_STORAGE_KEY, JSON.stringify(payload));
         }
     }
 
@@ -311,6 +380,118 @@
             if (this.goalPctDisplay) this.goalPctDisplay.textContent = `${pctMeta.toFixed(1)}% Concluído`;
             if (this.goalBarFill) this.goalBarFill.style.width = `${pctMeta}%`;
             if (this.cotasTotalBadge) this.cotasTotalBadge.textContent = `${cotas.length} Cota(s) Cadastrada(s)`;
+        }
+    }
+
+    class MetasComponent {
+        constructor(onSaveMeta, onDeleteMeta) {
+            this.onSaveMeta = onSaveMeta;
+            this.onDeleteMeta = onDeleteMeta;
+
+            this.metaForm = document.getElementById('meta-form');
+            this.metaIdInput = document.getElementById('meta-id');
+            this.metaNomeInput = document.getElementById('meta-nome');
+            this.metaValorInput = document.getElementById('meta-valor');
+            this.metaPrazoInput = document.getElementById('meta-prazo');
+            this.btnSalvarMeta = document.getElementById('btn-salvar-meta');
+            this.btnCancelarMeta = document.getElementById('btn-cancelar-meta');
+
+            this.metasGrid = document.getElementById('metas-grid');
+            this.metasCotasNecessarias = document.getElementById('metas-cotas-necessarias');
+            this.metasTotalValor = document.getElementById('metas-total-valor');
+            this.metasLucroRealizado = document.getElementById('metas-lucro-realizado');
+            this.metasSaldoRestante = document.getElementById('metas-saldo-restante');
+
+            this.initEvents();
+        }
+
+        initEvents() {
+            if (this.metaForm) {
+                this.metaForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newMeta = new MetaModel({
+                        id: this.metaIdInput.value || null,
+                        nome: this.metaNomeInput.value,
+                        valor: this.metaValorInput.value,
+                        prazo: this.metaPrazoInput.value
+                    });
+                    this.onSaveMeta(newMeta);
+                    this.resetForm();
+                });
+            }
+
+            if (this.btnCancelarMeta) {
+                this.btnCancelarMeta.addEventListener('click', () => this.resetForm());
+            }
+        }
+
+        fillForm(meta) {
+            this.metaIdInput.value = meta.id;
+            this.metaNomeInput.value = meta.nome;
+            this.metaValorInput.value = meta.valor;
+            this.metaPrazoInput.value = meta.prazo;
+
+            if (this.btnSalvarMeta) this.btnSalvarMeta.querySelector('span').textContent = 'Atualizar Meta';
+            if (this.btnCancelarMeta) this.btnCancelarMeta.style.display = 'block';
+        }
+
+        resetForm() {
+            this.metaIdInput.value = '';
+            this.metaForm.reset();
+            this.metaPrazoInput.value = 'Dezembro/2026';
+            if (this.btnSalvarMeta) this.btnSalvarMeta.querySelector('span').textContent = '+ Adicionar Meta';
+            if (this.btnCancelarMeta) this.btnCancelarMeta.style.display = 'none';
+        }
+
+        render(metas, cotas) {
+            if (!this.metasGrid) return;
+            this.metasGrid.innerHTML = '';
+
+            let totalMetasValor = 0;
+            metas.forEach((meta) => {
+                totalMetasValor += meta.valor;
+
+                const card = document.createElement('div');
+                card.className = 'meta-item-card';
+                card.innerHTML = `
+                    <div class="meta-item-info">
+                        <h4>${meta.nome}</h4>
+                        <p>Prazo: ${meta.prazo}</p>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span class="meta-item-val">${formatBRL(meta.valor)}</span>
+                        <button class="btn-tbl-action btn-edit-meta" style="margin-left: 8px; font-size: 10px;" data-id="${meta.id}">✎</button>
+                        <button class="btn-del-meta" data-id="${meta.id}" title="Excluir Meta">✕</button>
+                    </div>
+                `;
+
+                card.querySelector('.btn-edit-meta').addEventListener('click', () => {
+                    this.fillForm(meta);
+                });
+
+                card.querySelector('.btn-del-meta').addEventListener('click', () => {
+                    this.onDeleteMeta(meta.id);
+                });
+
+                this.metasGrid.appendChild(card);
+            });
+
+            // Calculate profit realized from sold cotas
+            let lucroRealizado = 0;
+            cotas.forEach(cota => {
+                if (cota.status === 'Vendida') {
+                    lucroRealizado += cota.lucroDesejado;
+                }
+            });
+
+            const saldoRestante = Math.max(0, totalMetasValor - lucroRealizado);
+            const lucroPorCota = 11500;
+            const cotasNecessarias = totalMetasValor > 0 ? Math.ceil(totalMetasValor / lucroPorCota) : 0;
+
+            if (this.metasCotasNecessarias) this.metasCotasNecessarias.textContent = `${cotasNecessarias} Cotas Necessárias`;
+            if (this.metasTotalValor) this.metasTotalValor.textContent = formatBRL(totalMetasValor);
+            if (this.metasLucroRealizado) this.metasLucroRealizado.textContent = formatBRL(lucroRealizado);
+            if (this.metasSaldoRestante) this.metasSaldoRestante.textContent = formatBRL(saldoRestante);
         }
     }
 
@@ -524,13 +705,18 @@
         }
     }
 
-    // 6. MAIN CONTROLLER WITH FIREBASE SYNC
+    // 6. MAIN CONTROLLER WITH FIREBASE & METAS REAL-TIME CRUD
     class AppController {
         constructor() {
             this.cotas = StorageService.loadCotas();
+            this.metas = StorageService.loadMetas();
             FirebaseService.init();
 
             this.dashboard = new DashboardComponent();
+            this.metasComponent = new MetasComponent(
+                this.handleSaveMeta.bind(this),
+                this.handleDeleteMeta.bind(this)
+            );
             this.form = new FormComponent(this.handleSaveCota.bind(this));
             this.table = new TableComponent(
                 this.handleEditCota.bind(this),
@@ -539,25 +725,58 @@
             );
             this.modal = new ModalComponent();
 
-            this.initCloudSync();
+            this.initCloudListeners();
             this.render();
         }
 
-        async initCloudSync() {
-            const cloudCotas = await FirebaseService.fetchCotasCloud();
-            if (cloudCotas && cloudCotas.length > 0) {
-                this.cotas = cloudCotas.map(item => new CotaModel(item));
-                this.render();
-            } else {
-                // Initial seed to cloud
-                this.cotas.forEach(cota => FirebaseService.saveCotaCloud(cota.toJSON()));
-            }
+        initCloudListeners() {
+            // Subscribe to Firebase Firestore real-time updates for Cotas
+            FirebaseService.subscribeCotasCloud(cloudCotas => {
+                if (cloudCotas && cloudCotas.length > 0) {
+                    this.cotas = cloudCotas.map(item => new CotaModel(item));
+                    this.render();
+                } else if (this.cotas.length > 0) {
+                    this.cotas.forEach(cota => FirebaseService.saveCotaCloud(cota.toJSON()));
+                }
+            });
+
+            // Subscribe to Firebase Firestore real-time updates for Metas
+            FirebaseService.subscribeMetasCloud(cloudMetas => {
+                if (cloudMetas && cloudMetas.length > 0) {
+                    this.metas = cloudMetas.map(item => new MetaModel(item));
+                    this.render();
+                } else if (this.metas.length > 0) {
+                    this.metas.forEach(meta => FirebaseService.saveMetaCloud(meta.toJSON()));
+                }
+            });
         }
 
         render() {
             this.dashboard.render(this.cotas);
+            this.metasComponent.render(this.metas, this.cotas);
             this.table.render(this.cotas);
+
             StorageService.saveCotas(this.cotas);
+            StorageService.saveMetas(this.metas);
+        }
+
+        handleSaveMeta(metaModel) {
+            const index = this.metas.findIndex(m => m.id === metaModel.id);
+            if (index >= 0) {
+                this.metas[index] = metaModel;
+            } else {
+                this.metas.push(metaModel);
+            }
+            FirebaseService.saveMetaCloud(metaModel.toJSON());
+            this.render();
+        }
+
+        handleDeleteMeta(metaId) {
+            if (confirm('Tem certeza que deseja excluir esta meta de compras?')) {
+                this.metas = this.metas.filter(m => m.id !== metaId);
+                FirebaseService.deleteMetaCloud(metaId);
+                this.render();
+            }
         }
 
         handleSaveCota(cotaModel) {

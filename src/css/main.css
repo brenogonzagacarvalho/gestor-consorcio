@@ -599,6 +599,101 @@ input:focus, .form-select:focus {
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
+/* Year-End Goals Planner Styles */
+.meta-form-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.flex-2 { flex: 2; }
+.flex-1 { flex: 1; }
+.flex-btn { display: flex; align-items: flex-end; }
+
+.metas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.meta-item-card {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.meta-item-card:hover {
+    border-color: var(--gold-border);
+    background: var(--bg-card-hover);
+}
+
+.meta-item-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.meta-item-info p {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.meta-item-val {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--gold);
+}
+
+.btn-del-meta {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.btn-del-meta:hover {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.metas-summary-footer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+}
+
+.summary-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-box span {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.summary-box strong {
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 2px;
+}
+
 /* ==========================================================================
    MOBILE & TABLET RESPONSIVE STYLES
    ========================================================================== */
